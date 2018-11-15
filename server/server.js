@@ -2,13 +2,15 @@ var express = require('express')
 var bodyParser = require('body-parser')
 
 var {mongoose} = require('./db/mongoose')
-var {Todo} = require('./models/todo')
-var {User} = require('./models/user')
+var {Todo} = require('./models/todo.js')
+var {User} = require('./models/user.js')
  
  var app=express()
 
 app.use(bodyParser.json());
 app.post('/todos',(req,res) => {
+	console.log("req")
+	console.log(req)
 	var todo = new Todo({
 		text: req.body.text
 	})
@@ -22,3 +24,5 @@ app.post('/todos',(req,res) => {
  app.listen(5000,()=>{
  	console.log('yeah...thats working')
  })
+
+module.exports = {app}
