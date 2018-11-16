@@ -1,6 +1,7 @@
+const _ = require('lodash')
 const expect = require('expect')
 const request = require('supertest')
-var {ObjectID} = require('mongodb')
+const {ObjectID} = require('mongodb')
 
 
 const {app} = require('./../server.js')
@@ -9,11 +10,9 @@ const {Todo} = require('./../models/todo.js')
 const todos = [{
 	_id: new ObjectID(),
 	text: 'First test todo'
-
 },{
 	_id: new ObjectID(),
 	text: 'second test todo'
-
 }]
 
 beforeEach((done)=>{
@@ -31,8 +30,8 @@ describe('POST/todos',()=>{
 		.send({text})
 		.expect(200)
 		.expect((res)=>{
-			console.log("*******")
-			console.log(res)
+			// console.log("*******")
+			// console.log(res)
 		expect(res.body.text).toBe(text)
 	})
 	.end((err,res)=>{
@@ -47,14 +46,11 @@ describe('POST/todos',()=>{
 	}).catch((e)=>done(e))
 })
 })
-
-
 		it('should not create a new todo with invalid data',(done)=>{
 		request(app)
 		.post('/todos')
 		.send({})
-		.expect(400)
-		
+		.expect(400)	
 	.end((err,res)=>{
 		if(err){
 			return done(err)
@@ -107,3 +103,43 @@ describe('GET/todos/:id',()=>{
 		.end(done)
 	})
 })
+describe('DELETE/todos/:id',()=>{
+	it('Should remove a todo',(done)=>{
+		var hexId = todos[1]._id.toHexString()
+
+		request(app)
+		.delete(`/todos/${hexId}`)
+		.expect(200)
+		// console.log(res.body.todo._id)
+		// console.log(hexId)
+		.expect((res)=>{
+			expect(res.body.todo._id).toBe(hexId)
+
+		})
+		.end((err,res)=>{
+			if(err){
+				return done(err)
+			}
+
+			Todo.findById(hexId).then((todo)=>{
+				expect(todo).toNotExist();
+				done()
+			}).catch((e)=>done(e))
+		})
+	})
+	it('should return 404 if todo not found',(done)=>{
+	var hexId = new ObjectID().toHexString();
+
+    request(app)
+      .delete(`/todos/${hexId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 if object id is invalid', (done) => {
+    request(app)
+      .delete('/todos/123abc')
+      .expect(404)
+      .end(done);
+  });
+});
