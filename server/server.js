@@ -56,12 +56,12 @@ app.patch('/todos/:id',(req,res)=>{
 	if(!ObjectID.isValid(id)){
 		return res.status(404).send();
 	}
-	console.log("1. "+_.isBoolean(body.completed))
-	console.log("2. "+body.completed)
-	if(_.isBoolean(body.completed)&& body.completed){
+	console.log("1. "+_.isBoolean(body.compeleted))
+	console.log("2. "+body.compeleted)
+	if(_.isBoolean(body.compeleted)&& body.compeleted){
 		console.log("in if loop")
-		body.completed = true;
-		body.completedAt = null;
+		body.compeleted = true;
+		body.compeletedAt = null;
 	}
 	console.log(body)
 	console.log("******")
@@ -72,9 +72,22 @@ app.patch('/todos/:id',(req,res)=>{
 		}
 		res.send({todo})
 	}).catch((e)=>{
-		res.status(404).send();
+		res.status(400).send();
 	})
 	})
+
+app.post('/users',(req,res)=>{
+	var body = _.pick(req.body, ['email','password'])
+	var user = new User(body)
+
+	user.save().then(()=>{
+		return user.generateAuthToken()
+	}).then((token)=>{
+		res.header('s-auth',token).send(user)
+	}).catch((e)=>{
+		res.status(400).send(e)
+	})
+})
 
 
  app.listen(port,()=>{
