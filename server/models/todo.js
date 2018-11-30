@@ -7,7 +7,7 @@ text :{
 	minlength : 1,
 	trim : true 
 },
-compeleted : {
+completed : {
 	type : Boolean,
 	default : false
 },
