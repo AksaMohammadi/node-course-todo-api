@@ -14,6 +14,10 @@ completed : {
 completedAt:{
 	type: Number,
 	default : null 
+},
+_Creator: {
+	type : mongoose.Schema.Types.ObjectId,
+	required: true
 }
 })
 
